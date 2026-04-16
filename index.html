@@ -266,14 +266,8 @@
                 experimentalFeatures: { useBarCodeDetectorIfSupported: true } 
             };
             
-            // Paksa resolusi HD & autofokus untuk kejelasan jarak jauh
-            const cameraSettings = { 
-                facingMode: "environment",
-                width: { min: 1280, ideal: 1920 }, // Resolusi HD/Full HD
-                advanced: [{ focusMode: "continuous" }]
-            };
-            
-            html5QrCode.start(cameraSettings, config, onScanSuccess)
+            // Guna tetapan kamera environment asas supaya serasi dengan semua peranti (tak kena block)
+            html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
                 .then(() => {
                     isScanning = true;
                     document.getElementById('btn-start-scan').classList.add('hidden');
@@ -281,6 +275,7 @@
                     document.getElementById('fallback-section').classList.add('hidden');
                 })
                 .catch(err => {
+                    console.error("Ralat Kamera:", err);
                     document.getElementById('fallback-section').classList.remove('hidden');
                 });
         }
