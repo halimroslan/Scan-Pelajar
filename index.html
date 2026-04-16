@@ -167,9 +167,11 @@
         // Data Pelajar (40 orang)
         let students = [];
         for (let i = 1; i <= 40; i++) {
-            // Gunakan ID nombor sahaja (1, 2, 3...) untuk dapatkan corak QR paling ringkas (Version 1)
-            let id = i.toString(); 
-            students.push({ id: id, no: i, name: `Pelajar ${i}`, present: false });
+            // Kita tambah "P" pada id tersembunyi (cth: P1) supaya scanner tak abaikan data terlalu pendek.
+            // Tapi untuk paparan pada kad, kita guna nombor biasa (1, 2, 3...)
+            let displayNombor = i.toString(); 
+            let scanId = "P" + displayNombor;
+            students.push({ id: scanId, display: displayNombor, name: `Pelajar ${i}`, present: false });
         }
 
         function showTab(tabId) {
@@ -187,7 +189,7 @@
                 if (std.present) hadirCount++;
                 const card = document.createElement('div');
                 card.className = `p-2 rounded border text-center font-semibold transition-all duration-300 ${std.present ? 'bg-green-500 text-white border-green-600 shadow-md transform scale-105' : 'bg-gray-50 text-gray-400 border-gray-200'}`;
-                card.innerHTML = `<div class="text-lg font-black">${std.id}</div><div class="text-xs truncate">${std.name}</div>`;
+                card.innerHTML = `<div class="text-lg font-black">${std.display}</div><div class="text-xs truncate">${std.name}</div>`;
                 grid.appendChild(card);
             });
             document.getElementById('hadir-count').innerText = `Hadir: ${hadirCount}/40`;
@@ -206,7 +208,7 @@
                 corners.forEach(pos => {
                     const span = document.createElement('span');
                     span.className = `corner-number ${pos}`;
-                    span.innerText = std.id;
+                    span.innerText = std.display; // Tunjuk nombor biasa
                     cardWrapper.appendChild(span);
                 });
 
@@ -222,12 +224,12 @@
 
                 grid.appendChild(cardWrapper);
                 
-                // Jana QR paling ringkas (Low Error Correction, Value pendek)
+                // Jana QR (menggunakan scanId seperti "P1")
                 new QRious({ 
                     element: canvas, 
                     value: std.id, 
                     size: 180, 
-                    level: 'L' // Level L hasilkan corak kotak yang paling besar & sedikit
+                    level: 'L'
                 });
             });
         }
@@ -258,12 +260,10 @@
         function startScanner() {
             if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
             
-            // Konfigurasi algoritma maksimum untuk kelajuan dan penjimatan CPU
+            // Konfigurasi stabil. Dibuang experimental feature yang bug pada iOS
             const config = { 
-                fps: 30, // Imbas lebih kerap (30 frame sesaat)
-                disableFlip: true, // JIMAT 50% CPU: Matikan imbasan terbalik (mirrored)
-                formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ],
-                experimentalFeatures: { useBarCodeDetectorIfSupported: true } 
+                fps: 15, // Kelajuan stabil dan selamat
+                formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ]
             };
             
             // Guna tetapan kamera environment asas supaya serasi dengan semua peranti (tak kena block)
@@ -314,7 +314,7 @@
             logEntry.className = 'flex justify-between items-center bg-gray-50 p-3 rounded border-l-4 border-green-500 fade-in-down mb-2 shadow-sm';
             logEntry.innerHTML = `
                 <div class="flex items-center">
-                    <span class="w-10 h-10 rounded bg-green-100 text-green-700 border border-green-200 flex items-center justify-center font-black text-lg mr-3">${student.id}</span>
+                    <span class="w-10 h-10 rounded bg-green-100 text-green-700 border border-green-200 flex items-center justify-center font-black text-lg mr-3">${student.display}</span>
                     <span class="font-bold text-gray-800 text-lg">${student.name}</span>
                 </div>
                 <span class="text-xs text-gray-400 font-mono bg-white px-2 py-1 rounded border">${timeStr}</span>
@@ -336,7 +336,7 @@
                     const box = document.getElementById('latest-scan-box');
                     const nameLabel = document.getElementById('latest-scan-name');
                     box.classList.remove('hidden');
-                    nameLabel.innerText = `${students[studentIndex].id} - ${students[studentIndex].name}`;
+                    nameLabel.innerText = `${students[studentIndex].display} - ${students[studentIndex].name}`;
                     
                     // Tambah ke senarai log terkini (Live Feed)
                     updateRecentLogs(students[studentIndex]);
