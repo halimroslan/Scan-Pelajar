@@ -61,10 +61,18 @@
         .cn-bl { bottom: 10px; left: 15px; }
         .cn-br { bottom: 10px; right: 15px; }
 
-        /* Sempadan putih tebal pada QR untuk pastikan scanner boleh kesan bentuk */
+        /* Sempadan putih tebal pada QR & rendering pixelated untuk ketajaman maksimum */
         canvas {
             background: white;
-            padding: 10px;
+            padding: 15px; /* Tebalkan quiet zone supaya senang dikesan */
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            /* Paksa browser render pixel dengan tajam (tak kabur) bila dicetak */
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
         }
 
         /* Animasi untuk log masuk */
@@ -221,7 +229,7 @@
                 new QRious({ 
                     element: canvas, 
                     value: std.id, 
-                    size: 180, 
+                    size: 400, // TINGKATKAN RESOLUSI: Paksa QRious lukis dengan kualiti HD
                     level: 'L'
                 });
             });
@@ -238,9 +246,9 @@
 
         let html5QrCode;
         let isScanning = false;
-        let multiScanActive = false; // Pembolehubah untuk kawal kelajuan imbasan pukal
+        let multiScanActive = false;
         
-        // Pengurusan Audio yang dioptimasi untuk imbasan serentak yang banyak (Multi-scan)
+        // Pengurusan Audio yang dioptimasi
         let audioCtx = null;
         function playBeep() {
             try {
@@ -252,7 +260,7 @@
                 }
                 const osc = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
-                gainNode.gain.value = 0.5; // Rendahkan sedikit kekuatan bunyi
+                gainNode.gain.value = 0.5; 
                 osc.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
                 osc.frequency.value = 800;
@@ -264,8 +272,6 @@
         function startScanner() {
             if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
             
-            // Kita turunkan FPS enjin bacaan lama supaya ia tidak menggunakan kuasa CPU yang banyak.
-            // Kuasa CPU akan disalurkan sepenuhnya kepada BarcodeDetector API (AI Terbina peranti).
             const config = { 
                 fps: 5, 
                 disableFlip: true, 
@@ -279,35 +285,32 @@
                     document.getElementById('btn-stop-scan').classList.remove('hidden');
                     document.getElementById('fallback-section').classList.add('hidden');
 
-                    // ==========================================
-                    // MULTI-SCAN HACK YANG DIOPTIMASI (Super Laju)
-                    // ==========================================
                     if ('BarcodeDetector' in window) {
                         const detector = new BarcodeDetector({ formats: ['qr_code'] });
                         multiScanActive = true;
+                        let lastScanTime = 0;
                         
-                        // Gunakan requestAnimationFrame untuk menyemak skrin secepat mungkin!
-                        const scanVideoFrame = async () => {
+                        // Gunakan requestAnimationFrame tetapi dengan "throttle" supaya tak panas/lag
+                        const scanVideoFrame = async (timestamp) => {
                             if (!multiScanActive) return;
                             
-                            const videoEl = document.querySelector('#reader video');
-                            if (videoEl && videoEl.readyState === 4) { 
-                                try {
-                                    // Tangkap semua QR dalam satu kelipan mata
-                                    const barcodes = await detector.detect(videoEl);
-                                    barcodes.forEach(barcode => {
-                                        onScanSuccess(barcode.rawValue);
-                                    });
-                                } catch (err) {
-                                    // Abaikan secara senyap jika ada ralat frame video
+                            // Hadkan kepada ~10-15 imbasan sesaat (cegah CPU dari tercekik/thermal throttling)
+                            if (timestamp - lastScanTime >= 80) { 
+                                const videoEl = document.querySelector('#reader video');
+                                if (videoEl && videoEl.readyState === 4) { 
+                                    try {
+                                        const barcodes = await detector.detect(videoEl);
+                                        barcodes.forEach(barcode => {
+                                            onScanSuccess(barcode.rawValue);
+                                        });
+                                    } catch (err) {}
                                 }
+                                lastScanTime = timestamp;
                             }
                             
-                            // Ulang fungsi secepat skrin membenarkannya (sangat laju)
                             requestAnimationFrame(scanVideoFrame);
                         };
                         
-                        // Mula pusingan pengesanan pantas
                         requestAnimationFrame(scanVideoFrame);
                     }
                 })
@@ -319,7 +322,7 @@
 
         function stopScanner() {
             if (html5QrCode && isScanning) {
-                multiScanActive = false; // Matikan pusingan Multi-Scan Pantas
+                multiScanActive = false;
                 html5QrCode.stop().then(() => {
                     isScanning = false;
                     document.getElementById('btn-start-scan').classList.remove('hidden');
@@ -328,9 +331,6 @@
             }
         }
 
-        // =======================================================
-        // FAIL UPLOAD: Sekarang menyokong tangkapan pukal (Ramai)
-        // =======================================================
         function handleFileUpload(event) {
             if (event.target.files.length == 0) return;
             const file = event.target.files[0];
