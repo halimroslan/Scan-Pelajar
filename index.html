@@ -17,24 +17,54 @@
             .no-print { display: none !important; }
             .print-only { display: block !important; }
             body { background: white; padding: 0; margin: 0; }
-            .qr-card { 
-                page-break-inside: avoid; 
-                border: 2px solid #000; 
-                padding: 15px; 
-                margin: 10px;
-                text-align: center;
-                width: calc(33% - 20px); /* 3 kad sebaris */
-                display: inline-block;
+            
+            /* Susunan kad cetakan */
+            .qr-grid { 
+                display: flex !important; 
+                flex-wrap: wrap !important;
+                justify-content: center;
+                gap: 20px;
             }
-            .qr-grid { display: block; }
+            .qr-card-wrapper { 
+                page-break-inside: avoid; 
+                width: calc(45% - 20px); /* 2 kad besar sebaris supaya nampak jelas dari jauh */
+                margin-bottom: 20px;
+            }
         }
-        .qr-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; text-align: center; background: white; }
-        
-        /* Tambah sempadan putih tebal pada QR untuk pastikan scanner boleh kesan bentuk empat segi */
-        .qr-card canvas {
-            border: 15px solid white;
+
+        /* Rekaan kad ala-Plickers */
+        .qr-card-wrapper {
+            position: relative;
             background: white;
-            border-radius: 4px;
+            border: 4px solid #111;
+            border-radius: 8px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            aspect-ratio: 1 / 1; /* Kekal bentuk petak sama sisi */
+            max-width: 300px;
+            width: 100%;
+        }
+
+        /* Nombor di setiap penjuru */
+        .corner-number {
+            position: absolute;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #111;
+        }
+        .cn-tl { top: 10px; left: 15px; }
+        .cn-tr { top: 10px; right: 15px; }
+        .cn-bl { bottom: 10px; left: 15px; }
+        .cn-br { bottom: 10px; right: 15px; }
+
+        /* Sempadan putih tebal pada QR untuk pastikan scanner boleh kesan bentuk */
+        canvas {
+            background: white;
+            padding: 10px;
         }
 
         /* Animasi untuk log masuk */
@@ -53,42 +83,42 @@
     <nav class="bg-blue-600 text-white shadow-md p-4 no-print fixed top-0 w-full z-10">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <h1 class="text-xl font-bold">Kehadiran Kelas</h1>
-            <div class="space-x-2">
-                <button onclick="showTab('tab-kamera')" class="px-3 py-2 bg-blue-700 hover:bg-blue-800 rounded">📷 Imbas</button>
-                <button onclick="showTab('tab-senarai')" class="px-3 py-2 bg-blue-700 hover:bg-blue-800 rounded">📋 Senarai</button>
-                <button onclick="showTab('tab-qr')" class="px-3 py-2 bg-blue-700 hover:bg-blue-800 rounded">🖨️ Kad QR</button>
+            <div class="space-x-2 flex">
+                <button onclick="showTab('tab-kamera')" class="px-2 py-1 md:px-3 md:py-2 bg-blue-700 hover:bg-blue-800 rounded text-sm md:text-base mr-1">📷 Imbas</button>
+                <button onclick="showTab('tab-senarai')" class="px-2 py-1 md:px-3 md:py-2 bg-blue-700 hover:bg-blue-800 rounded text-sm md:text-base mr-1">📋 Senarai</button>
+                <button onclick="showTab('tab-qr')" class="px-2 py-1 md:px-3 md:py-2 bg-blue-700 hover:bg-blue-800 rounded text-sm md:text-base">🖨️ Kad</button>
             </div>
         </div>
     </nav>
 
-    <div class="max-w-6xl mx-auto pt-20 p-4">
+    <div class="max-w-6xl mx-auto pt-24 p-4">
 
         <!-- TAB 1: KAMERA (Imbas QR) -->
         <div id="tab-kamera" class="tab-content">
             <div class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
-                <h2 class="text-2xl font-bold mb-4 text-center">Imbas QR Pelajar</h2>
-                <p class="text-gray-500 text-center mb-4 text-sm">Hala kamera ke arah kad QR pelajar. Sistem akan kesan secara automatik.</p>
+                <h2 class="text-2xl font-bold mb-4 text-center">Imbas Kad Pelajar</h2>
+                <p class="text-gray-500 text-center mb-4 text-sm">Hala kamera ke arah kad pelajar. Sistem akan kesan secara automatik.</p>
                 
-                <div id="reader" class="w-full bg-black rounded overflow-hidden"></div>
+                <div id="reader" class="w-full bg-black rounded overflow-hidden shadow-inner"></div>
                 
                 <div class="mt-6 text-center">
-                    <button id="btn-start-scan" onclick="startScanner()" class="px-6 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-600 shadow-lg">Mula Imbas Live</button>
-                    <button id="btn-stop-scan" onclick="stopScanner()" class="px-6 py-2 bg-red-500 text-white font-bold rounded hover:bg-red-600 hidden">Berhenti Imbas</button>
+                    <button id="btn-start-scan" onclick="startScanner()" class="px-6 py-3 bg-green-500 text-white font-bold rounded hover:bg-green-600 shadow-lg w-full max-w-xs text-lg">Mula Imbas Live</button>
+                    <button id="btn-stop-scan" onclick="stopScanner()" class="px-6 py-3 bg-red-500 text-white font-bold rounded hover:bg-red-600 hidden w-full max-w-xs text-lg mx-auto">Berhenti Imbas</button>
                 </div>
 
-                <!-- Fallback Seksyen (Jika Live Kamera Disekat) -->
+                <!-- Fallback Seksyen -->
                 <div id="fallback-section" class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded hidden text-center">
                     <p class="text-sm text-yellow-800 mb-3 font-semibold">Live kamera disekat oleh peranti anda. Guna mod alternatif:</p>
                     <label for="qr-input-file" class="cursor-pointer px-6 py-3 bg-blue-500 text-white font-bold rounded hover:bg-blue-600 inline-block shadow">
-                        📸 Ambil Gambar QR (Manual)
+                        📸 Ambil Gambar Manual
                     </label>
                     <input type="file" id="qr-input-file" accept="image/*" capture="environment" class="hidden" onchange="handleFileUpload(event)">
                 </div>
 
                 <!-- Paparan Terkini (Besar) -->
-                <div class="mt-6 p-4 bg-green-50 rounded border-2 border-green-400 hidden text-center fade-in-down" id="latest-scan-box">
+                <div class="mt-6 p-4 bg-green-50 rounded border-2 border-green-400 hidden text-center fade-in-down shadow-md" id="latest-scan-box">
                     <p class="text-xs text-green-600 uppercase font-bold tracking-widest mb-1">Berjaya Dikesan</p>
-                    <p id="latest-scan-name" class="text-2xl font-black text-green-900 leading-tight">-</p>
+                    <p id="latest-scan-name" class="text-3xl font-black text-green-900 leading-tight">-</p>
                 </div>
 
                 <!-- Senarai Log Live (History) -->
@@ -108,11 +138,11 @@
                     <h2 class="text-2xl font-bold">Status Kehadiran</h2>
                     <div class="space-x-2">
                         <span id="hadir-count" class="px-3 py-1 bg-green-100 text-green-800 rounded-full font-bold">Hadir: 0/40</span>
-                        <button onclick="resetKehadiran()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 text-sm">Reset Semua</button>
+                        <button onclick="resetKehadiran()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 text-sm shadow">Reset Semua</button>
                     </div>
                 </div>
                 
-                <div id="student-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                <div id="student-grid" class="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-8 gap-2">
                     <!-- Senarai pelajar akan dijana di sini -->
                 </div>
             </div>
@@ -121,12 +151,12 @@
         <!-- TAB 3: CETAK KAD QR -->
         <div id="tab-qr" class="tab-content hidden">
             <div class="bg-white p-6 rounded-lg shadow-md no-print mb-4">
-                <h2 class="text-2xl font-bold mb-2">Jana & Cetak Kad QR</h2>
-                <p class="text-gray-600 mb-4">Pastikan jari tidak menutup corak QR semasa pelajar memegangnya. Gunakan kertas yang tidak berkilat untuk imbasan terbaik.</p>
-                <button onclick="window.print()" class="px-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700 w-full md:w-auto">🖨️ Cetak Kad QR</button>
+                <h2 class="text-2xl font-bold mb-2">Jana & Cetak Kad (Gaya Plickers)</h2>
+                <p class="text-gray-600 mb-4">Kod QR diringkaskan ke tahap paling minimum (kotak besar) supaya mudah diimbas dari jauh. Pegang kad dari bucu luaran supaya jari tidak menutup corak hitam.</p>
+                <button onclick="window.print()" class="px-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700 w-full md:w-auto shadow-lg">🖨️ Cetak Kad Sekarang</button>
             </div>
 
-            <div id="qr-print-grid" class="flex flex-wrap justify-center gap-4 qr-grid bg-white p-4 rounded">
+            <div id="qr-print-grid" class="flex flex-wrap justify-center gap-6 qr-grid bg-white p-4 rounded">
                 <!-- QR Codes akan dijana di sini -->
             </div>
         </div>
@@ -137,7 +167,8 @@
         // Data Pelajar (40 orang)
         let students = [];
         for (let i = 1; i <= 40; i++) {
-            let id = i < 10 ? `S0${i}` : `S${i}`;
+            // Gunakan ID nombor sahaja (1, 2, 3...) untuk dapatkan corak QR paling ringkas (Version 1)
+            let id = i.toString(); 
             students.push({ id: id, no: i, name: `Pelajar ${i}`, present: false });
         }
 
@@ -155,8 +186,8 @@
             students.forEach(std => {
                 if (std.present) hadirCount++;
                 const card = document.createElement('div');
-                card.className = `p-3 rounded border text-center font-semibold transition-all duration-300 ${std.present ? 'bg-green-500 text-white border-green-600 shadow-md transform scale-105' : 'bg-gray-50 text-gray-400 border-gray-200'}`;
-                card.innerHTML = `<div class="text-xs opacity-70">${std.id}</div><div>${std.name}</div>`;
+                card.className = `p-2 rounded border text-center font-semibold transition-all duration-300 ${std.present ? 'bg-green-500 text-white border-green-600 shadow-md transform scale-105' : 'bg-gray-50 text-gray-400 border-gray-200'}`;
+                card.innerHTML = `<div class="text-lg font-black">${std.id}</div><div class="text-xs truncate">${std.name}</div>`;
                 grid.appendChild(card);
             });
             document.getElementById('hadir-count').innerText = `Hadir: ${hadirCount}/40`;
@@ -166,16 +197,38 @@
             const grid = document.getElementById('qr-print-grid');
             grid.innerHTML = '';
             students.forEach(std => {
-                const card = document.createElement('div');
-                card.className = 'qr-card flex flex-col items-center justify-center';
+                // Wrapper utama kad (Bingkai luar ala Plickers)
+                const cardWrapper = document.createElement('div');
+                cardWrapper.className = 'qr-card-wrapper';
+
+                // Tambah 4 nombor di penjuru kad
+                const corners = ['cn-tl', 'cn-tr', 'cn-bl', 'cn-br'];
+                corners.forEach(pos => {
+                    const span = document.createElement('span');
+                    span.className = `corner-number ${pos}`;
+                    span.innerText = std.id;
+                    cardWrapper.appendChild(span);
+                });
+
+                // Ruang lukisan QR
                 const canvas = document.createElement('canvas');
-                card.appendChild(canvas);
+                cardWrapper.appendChild(canvas);
+                
+                // Nama kecil di bawah QR
                 const label = document.createElement('div');
-                label.className = 'mt-2 font-bold text-lg';
-                label.innerText = `${std.id} - ${std.name}`;
-                card.appendChild(label);
-                grid.appendChild(card);
-                new QRious({ element: canvas, value: std.id, size: 250, level: 'M' });
+                label.className = 'mt-3 font-bold text-lg text-black text-center';
+                label.innerText = std.name;
+                cardWrapper.appendChild(label);
+
+                grid.appendChild(cardWrapper);
+                
+                // Jana QR paling ringkas (Low Error Correction, Value pendek)
+                new QRious({ 
+                    element: canvas, 
+                    value: std.id, 
+                    size: 180, 
+                    level: 'L' // Level L hasilkan corak kotak yang paling besar & sedikit
+                });
             });
         }
 
@@ -204,8 +257,23 @@
 
         function startScanner() {
             if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-            const config = { fps: 10, experimentalFeatures: { useBarCodeDetectorIfSupported: true } };
-            html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
+            
+            // Konfigurasi algoritma maksimum untuk kelajuan dan penjimatan CPU
+            const config = { 
+                fps: 30, // Imbas lebih kerap (30 frame sesaat)
+                disableFlip: true, // JIMAT 50% CPU: Matikan imbasan terbalik (mirrored)
+                formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ],
+                experimentalFeatures: { useBarCodeDetectorIfSupported: true } 
+            };
+            
+            // Paksa resolusi HD & autofokus untuk kejelasan jarak jauh
+            const cameraSettings = { 
+                facingMode: "environment",
+                width: { min: 1280, ideal: 1920 }, // Resolusi HD/Full HD
+                advanced: [{ focusMode: "continuous" }]
+            };
+            
+            html5QrCode.start(cameraSettings, config, onScanSuccess)
                 .then(() => {
                     isScanning = true;
                     document.getElementById('btn-start-scan').classList.add('hidden');
@@ -232,7 +300,7 @@
             if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
             html5QrCode.scanFile(event.target.files[0], true)
                 .then(decodedText => onScanSuccess(decodedText))
-                .catch(err => alert("Gagal mengesan QR. Cuba ambil gambar lebih jelas."));
+                .catch(err => alert("Gagal mengesan kad. Cuba pastikan gambar lebih jelas dan kotak hitam tidak terlindung."));
             event.target.value = "";
         }
 
@@ -248,13 +316,13 @@
             const timeStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
 
             const logEntry = document.createElement('div');
-            logEntry.className = 'flex justify-between items-center bg-gray-50 p-2 rounded border-l-4 border-green-500 fade-in-down';
+            logEntry.className = 'flex justify-between items-center bg-gray-50 p-3 rounded border-l-4 border-green-500 fade-in-down mb-2 shadow-sm';
             logEntry.innerHTML = `
                 <div class="flex items-center">
-                    <span class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mr-3">${student.id}</span>
-                    <span class="font-bold text-gray-700">${student.name}</span>
+                    <span class="w-10 h-10 rounded bg-green-100 text-green-700 border border-green-200 flex items-center justify-center font-black text-lg mr-3">${student.id}</span>
+                    <span class="font-bold text-gray-800 text-lg">${student.name}</span>
                 </div>
-                <span class="text-xs text-gray-400 font-mono">${timeStr}</span>
+                <span class="text-xs text-gray-400 font-mono bg-white px-2 py-1 rounded border">${timeStr}</span>
             `;
 
             // Masukkan di bahagian paling atas senarai
@@ -273,7 +341,7 @@
                     const box = document.getElementById('latest-scan-box');
                     const nameLabel = document.getElementById('latest-scan-name');
                     box.classList.remove('hidden');
-                    nameLabel.innerText = students[studentIndex].name;
+                    nameLabel.innerText = `${students[studentIndex].id} - ${students[studentIndex].name}`;
                     
                     // Tambah ke senarai log terkini (Live Feed)
                     updateRecentLogs(students[studentIndex]);
