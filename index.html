@@ -238,7 +238,7 @@
 
         let html5QrCode;
         let isScanning = false;
-        let multiScanInterval;
+        let multiScanActive = false; // Pembolehubah untuk kawal kelajuan imbasan pukal
         
         // Pengurusan Audio yang dioptimasi untuk imbasan serentak yang banyak (Multi-scan)
         let audioCtx = null;
@@ -264,9 +264,11 @@
         function startScanner() {
             if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
             
+            // Kita turunkan FPS enjin bacaan lama supaya ia tidak menggunakan kuasa CPU yang banyak.
+            // Kuasa CPU akan disalurkan sepenuhnya kepada BarcodeDetector API (AI Terbina peranti).
             const config = { 
-                fps: 30, // Dipaksa maksimum laju
-                disableFlip: true, // Tidak baca secara terbalik, menjimatkan memori & lebih pantas
+                fps: 5, 
+                disableFlip: true, 
                 formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ]
             };
             
@@ -278,25 +280,35 @@
                     document.getElementById('fallback-section').classList.add('hidden');
 
                     // ==========================================
-                    // MULTI-SCAN HACK (Tangkap Semua Dalam Skrin)
+                    // MULTI-SCAN HACK YANG DIOPTIMASI (Super Laju)
                     // ==========================================
                     if ('BarcodeDetector' in window) {
                         const detector = new BarcodeDetector({ formats: ['qr_code'] });
-                        multiScanInterval = setInterval(async () => {
+                        multiScanActive = true;
+                        
+                        // Gunakan requestAnimationFrame untuk menyemak skrin secepat mungkin!
+                        const scanVideoFrame = async () => {
+                            if (!multiScanActive) return;
+                            
                             const videoEl = document.querySelector('#reader video');
-                            // Pastikan video sedia ada
                             if (videoEl && videoEl.readyState === 4) { 
                                 try {
-                                    // Cari SEMUA barcode yang wujud dalam satu frame video serentak
+                                    // Tangkap semua QR dalam satu kelipan mata
                                     const barcodes = await detector.detect(videoEl);
                                     barcodes.forEach(barcode => {
                                         onScanSuccess(barcode.rawValue);
                                     });
                                 } catch (err) {
-                                    // Abaikan secara senyap jika ada ralat frame
+                                    // Abaikan secara senyap jika ada ralat frame video
                                 }
                             }
-                        }, 300); // Tembak scan serentak 3 kali setiap saat
+                            
+                            // Ulang fungsi secepat skrin membenarkannya (sangat laju)
+                            requestAnimationFrame(scanVideoFrame);
+                        };
+                        
+                        // Mula pusingan pengesanan pantas
+                        requestAnimationFrame(scanVideoFrame);
                     }
                 })
                 .catch(err => {
@@ -307,10 +319,7 @@
 
         function stopScanner() {
             if (html5QrCode && isScanning) {
-                if (multiScanInterval) {
-                    clearInterval(multiScanInterval);
-                    multiScanInterval = null;
-                }
+                multiScanActive = false; // Matikan pusingan Multi-Scan Pantas
                 html5QrCode.stop().then(() => {
                     isScanning = false;
                     document.getElementById('btn-start-scan').classList.remove('hidden');
