@@ -1,328 +1,305 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2868
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
-{\colortbl;\red255\green255\blue255;\red70\green137\blue204;\red23\green24\blue24;\red140\green211\blue254;
-\red202\green202\blue202;\red109\green109\blue109;\red194\green126\blue101;\red109\green115\blue120;\red212\green212\blue212;
-\red183\green111\blue247;\red167\green197\blue152;\red246\green124\blue48;\red113\green192\blue131;\red54\green192\blue160;
-}
-{\*\expandedcolortbl;;\cssrgb\c33725\c61176\c83922;\cssrgb\c11765\c12157\c12549;\cssrgb\c61176\c86275\c99608;
-\cssrgb\c83137\c83137\c83137;\cssrgb\c50196\c50196\c50196;\cssrgb\c80784\c56863\c47059;\cssrgb\c50196\c52549\c54510;\cssrgb\c86275\c86275\c86275;
-\cssrgb\c77255\c54118\c97647;\cssrgb\c70980\c80784\c65882;\cssrgb\c98039\c56471\c24314;\cssrgb\c50588\c78824\c58431;\cssrgb\c23922\c78824\c69020;
-}
-\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
-\deftab720
-\pard\pardeftab720\partightenfactor0
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Kehadiran Kelas (Imbas QR)</title>
+    <!-- Tailwind CSS untuk styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html5-qrcode untuk akses kamera & imbas QR -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <!-- QRious untuk jana QR code -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    
+    <style>
+        /* Gaya khusus untuk cetakan (Print) */
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; padding: 0; margin: 0; }
+            .qr-card { 
+                page-break-inside: avoid; 
+                border: 2px solid #000; 
+                padding: 15px; 
+                margin: 10px;
+                text-align: center;
+                width: calc(33% - 20px); /* 3 kad sebaris */
+                display: inline-block;
+            }
+            .qr-grid { display: block; }
+        }
+        .qr-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; text-align: center; background: white; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
 
-\f0\fs28 \cf2 \cb3 \expnd0\expndtw0\kerning0
-\outl0\strokewidth0 \strokec2 <!DOCTYPE\cf4 \strokec4  html\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf6 \cb3 \strokec6 <\cf2 \strokec2 html\cf5 \strokec5  \cf4 \strokec4 lang\cf6 \strokec6 =\cf7 \strokec7 "ms"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cf6 \cb3 \strokec6 <\cf2 \strokec2 head\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf5 \cb3     \cf6 \strokec6 <\cf2 \strokec2 meta\cf5 \strokec5  \cf4 \strokec4 charset\cf6 \strokec6 =\cf7 \strokec7 "UTF-8"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3     \cf6 \strokec6 <\cf2 \strokec2 meta\cf5 \strokec5  \cf4 \strokec4 name\cf6 \strokec6 =\cf7 \strokec7 "viewport"\cf5 \strokec5  \cf4 \strokec4 content\cf6 \strokec6 =\cf7 \strokec7 "width=device-width, initial-scale=1.0"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3     \cf6 \strokec6 <\cf2 \strokec2 title\cf6 \strokec6 >\cf5 \strokec5 Sistem Kehadiran Kelas (Imbas QR)\cf6 \strokec6 </\cf2 \strokec2 title\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3     \cf8 \strokec8 <!-- Tailwind CSS untuk styling -->\cf5 \cb1 \strokec5 \
-\cb3     \cf6 \strokec6 <\cf2 \strokec2 script\cf5 \strokec5  \cf4 \strokec4 src\cf6 \strokec6 =\cf7 \strokec7 "https://cdn.tailwindcss.com"\cf6 \strokec6 ></\cf2 \strokec2 script\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3     \cf8 \strokec8 <!-- html5-qrcode untuk akses kamera & imbas QR -->\cf5 \cb1 \strokec5 \
-\cb3     \cf6 \strokec6 <\cf2 \strokec2 script\cf5 \strokec5  \cf4 \strokec4 src\cf6 \strokec6 =\cf7 \strokec7 "https://unpkg.com/html5-qrcode"\cf5 \strokec5  \cf4 \strokec4 type\cf6 \strokec6 =\cf7 \strokec7 "text/javascript"\cf6 \strokec6 ></\cf2 \strokec2 script\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3     \cf8 \strokec8 <!-- QRious untuk jana QR code -->\cf5 \cb1 \strokec5 \
-\cb3     \cf6 \strokec6 <\cf2 \strokec2 script\cf5 \strokec5  \cf4 \strokec4 src\cf6 \strokec6 =\cf7 \strokec7 "https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"\cf6 \strokec6 ></\cf2 \strokec2 script\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3     \cb1 \
-\cb3     \cf6 \strokec6 <\cf2 \strokec2 style\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3         \cf8 \strokec8 /* Gaya khusus untuk cetakan (Print) */\cf5 \cb1 \strokec5 \
-\cb3         @\cf2 \strokec2 media\cf5 \strokec5  \cf2 \strokec2 print\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3             .no-print \{ \cf4 \strokec4 display:\cf5 \strokec5  \cf7 \strokec7 none\cf5 \strokec5  \cf10 \strokec10 !important\cf9 \strokec9 ;\cf5 \strokec5  \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\cb3             \cf2 \strokec2 .print-only\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \strokec5  \cf4 \strokec4 display:\cf5 \strokec5  \cf7 \strokec7 block\cf5 \strokec5  \cf10 \strokec10 !important\cf9 \strokec9 ;\cf5 \strokec5  \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\cb3             \cf2 \strokec2 body\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \strokec5  \cf4 \strokec4 background:\cf5 \strokec5  \cf7 \strokec7 white\cf9 \strokec9 ;\cf5 \strokec5  \cf4 \strokec4 padding:\cf5 \strokec5  \cf11 \strokec11 0\cf9 \strokec9 ;\cf5 \strokec5  \cf4 \strokec4 margin:\cf5 \strokec5  \cf11 \strokec11 0\cf9 \strokec9 ;\cf5 \strokec5  \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\cb3             \cf2 \strokec2 .qr-card\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \strokec5  \cb1 \
-\cb3                 \cf4 \strokec4 page-break-inside:\cf5 \strokec5  \cf7 \strokec7 avoid\cf9 \strokec9 ;\cf5 \strokec5  \cb1 \
-\cb3                 \cf4 \strokec4 border:\cf5 \strokec5  \cf11 \strokec11 2px\cf5 \strokec5  \cf7 \strokec7 solid\cf5 \strokec5  #000\cf9 \strokec9 ;\cf5 \strokec5  \cb1 \
-\cb3                 \cf4 \strokec4 padding:\cf5 \strokec5  \cf11 \strokec11 15px\cf9 \strokec9 ;\cf5 \strokec5  \cb1 \
-\cb3                 \cf4 \strokec4 margin:\cf5 \strokec5  \cf11 \strokec11 10px\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3                 \cf4 \strokec4 text-align:\cf5 \strokec5  \cf7 \strokec7 center\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3                 \cf4 \strokec4 width:\cf5 \strokec5  \cf7 \strokec7 calc(\cf11 \strokec11 33%\cf5 \strokec5  \cf9 \strokec9 -\cf5 \strokec5  \cf11 \strokec11 20px\cf7 \strokec7 )\cf9 \strokec9 ;\cf5 \strokec5  \cf8 \strokec8 /* 3 kad sebaris */\cf5 \cb1 \strokec5 \
-\cb3                 \cf4 \strokec4 display:\cf5 \strokec5  \cf7 \strokec7 inline-block\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3             \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\cb3             \cf2 \strokec2 .qr-grid\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \strokec5  \cf4 \strokec4 display:\cf5 \strokec5  \cf7 \strokec7 block\cf9 \strokec9 ;\cf5 \strokec5  \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\cb3         \}\cb1 \
-\cb3         \cf2 \strokec2 .qr-card\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \strokec5  \cf4 \strokec4 border:\cf5 \strokec5  \cf11 \strokec11 1px\cf5 \strokec5  \cf7 \strokec7 solid\cf5 \strokec5  #e5e7eb\cf9 \strokec9 ;\cf5 \strokec5  \cf4 \strokec4 border-radius:\cf5 \strokec5  \cf11 \strokec11 8px\cf9 \strokec9 ;\cf5 \strokec5  \cf4 \strokec4 padding:\cf5 \strokec5  \cf11 \strokec11 1rem\cf9 \strokec9 ;\cf5 \strokec5  \cf4 \strokec4 text-align:\cf5 \strokec5  \cf7 \strokec7 center\cf9 \strokec9 ;\cf5 \strokec5  \cf4 \strokec4 background:\cf5 \strokec5  \cf7 \strokec7 white\cf9 \strokec9 ;\cf5 \strokec5  \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\cb3     \cf6 \strokec6 </\cf2 \strokec2 style\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf6 \cb3 \strokec6 </\cf2 \strokec2 head\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cf6 \cb3 \strokec6 <\cf2 \strokec2 body\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "bg-gray-100 text-gray-800 font-sans min-h-screen"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\
-\pard\pardeftab720\partightenfactor0
-\cf5 \cb3     \cf8 \strokec8 <!-- Navigasi -->\cf5 \cb1 \strokec5 \
-\cb3     \cf6 \strokec6 <\cf2 \strokec2 nav\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "bg-blue-600 text-white shadow-md p-4 no-print fixed top-0 w-full z-10"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3         \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "max-w-6xl mx-auto flex justify-between items-center"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3             \cf6 \strokec6 <\cf2 \strokec2 h1\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "text-xl font-bold"\cf6 \strokec6 >\cf5 \strokec5 Kehadiran Kelas\cf6 \strokec6 </\cf2 \strokec2 h1\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3             \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "space-x-2"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cf6 \strokec6 <\cf2 \strokec2 button\cf5 \strokec5  \cf4 \strokec4 onclick\cf6 \strokec6 =\cf7 \strokec7 "showTab('tab-kamera')"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "px-3 py-2 bg-blue-700 hover:bg-blue-800 rounded"\cf6 \strokec6 >\cf5 \strokec5 \uc0\u55357 \u56567  Imbas\cf6 \strokec6 </\cf2 \strokec2 button\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cf6 \strokec6 <\cf2 \strokec2 button\cf5 \strokec5  \cf4 \strokec4 onclick\cf6 \strokec6 =\cf7 \strokec7 "showTab('tab-senarai')"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "px-3 py-2 bg-blue-700 hover:bg-blue-800 rounded"\cf6 \strokec6 >\cf5 \strokec5 \uc0\u55357 \u56523  Senarai\cf6 \strokec6 </\cf2 \strokec2 button\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cf6 \strokec6 <\cf2 \strokec2 button\cf5 \strokec5  \cf4 \strokec4 onclick\cf6 \strokec6 =\cf7 \strokec7 "showTab('tab-qr')"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "px-3 py-2 bg-blue-700 hover:bg-blue-800 rounded"\cf6 \strokec6 >\cf5 \strokec5 \uc0\u55357 \u56744 \u65039  Kad QR\cf6 \strokec6 </\cf2 \strokec2 button\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3             \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3         \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3     \cf6 \strokec6 </\cf2 \strokec2 nav\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\
-\cb3     \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "max-w-6xl mx-auto pt-20 p-4"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\
-\cb3         \cf8 \strokec8 <!-- TAB 1: KAMERA (Imbas QR) -->\cf5 \cb1 \strokec5 \
-\cb3         \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 id\cf6 \strokec6 =\cf7 \strokec7 "tab-kamera"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "tab-content"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3             \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cf6 \strokec6 <\cf2 \strokec2 h2\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "text-2xl font-bold mb-4 text-center"\cf6 \strokec6 >\cf5 \strokec5 Imbas QR Pelajar\cf6 \strokec6 </\cf2 \strokec2 h2\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cf6 \strokec6 <\cf2 \strokec2 p\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "text-gray-500 text-center mb-4 text-sm"\cf6 \strokec6 >\cf5 \strokec5 Hala kamera ke arah kad QR pelajar. Sistem akan kesan secara automatik.\cf6 \strokec6 </\cf2 \strokec2 p\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cb1 \
-\cb3                 \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 id\cf6 \strokec6 =\cf7 \strokec7 "reader"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "w-full bg-black rounded overflow-hidden"\cf6 \strokec6 ></\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cb1 \
-\cb3                 \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "mt-6 text-center"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                     \cf6 \strokec6 <\cf2 \strokec2 button\cf5 \strokec5  \cf4 \strokec4 id\cf6 \strokec6 =\cf7 \strokec7 "btn-start-scan"\cf5 \strokec5  \cf4 \strokec4 onclick\cf6 \strokec6 =\cf7 \strokec7 "startScanner()"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "px-6 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-600"\cf6 \strokec6 >\cf5 \strokec5 Mula Imbas Live\cf6 \strokec6 </\cf2 \strokec2 button\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                     \cf6 \strokec6 <\cf2 \strokec2 button\cf5 \strokec5  \cf4 \strokec4 id\cf6 \strokec6 =\cf7 \strokec7 "btn-stop-scan"\cf5 \strokec5  \cf4 \strokec4 onclick\cf6 \strokec6 =\cf7 \strokec7 "stopScanner()"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "px-6 py-2 bg-red-500 text-white font-bold rounded hover:bg-red-600 hidden"\cf6 \strokec6 >\cf5 \strokec5 Berhenti Imbas\cf6 \strokec6 </\cf2 \strokec2 button\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\
-\cb3                 \cf8 \strokec8 <!-- Fallback Seksyen (Jika Live Kamera Disekat) -->\cf5 \cb1 \strokec5 \
-\cb3                 \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 id\cf6 \strokec6 =\cf7 \strokec7 "fallback-section"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded hidden text-center"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                     \cf6 \strokec6 <\cf2 \strokec2 p\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "text-sm text-yellow-800 mb-3 font-semibold"\cf6 \strokec6 >\cf5 \strokec5 Live kamera disekat oleh sistem (biasa berlaku di iOS/Apps Script). Guna mod alternatif di bawah:\cf6 \strokec6 </\cf2 \strokec2 p\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                     \cf6 \strokec6 <\cf2 \strokec2 label\cf5 \strokec5  \cf4 \strokec4 for\cf6 \strokec6 =\cf7 \strokec7 "qr-input-file"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "cursor-pointer px-6 py-3 bg-blue-500 text-white font-bold rounded hover:bg-blue-600 inline-block shadow"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                         \uc0\u55357 \u56568  Ambil Gambar QR (Manual)\cb1 \
-\cb3                     \cf6 \strokec6 </\cf2 \strokec2 label\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                     \cf6 \strokec6 <\cf2 \strokec2 input\cf5 \strokec5  \cf4 \strokec4 type\cf6 \strokec6 =\cf7 \strokec7 "file"\cf5 \strokec5  \cf4 \strokec4 id\cf6 \strokec6 =\cf7 \strokec7 "qr-input-file"\cf5 \strokec5  \cf4 \strokec4 accept\cf6 \strokec6 =\cf7 \strokec7 "image/*"\cf5 \strokec5  \cf4 \strokec4 capture\cf6 \strokec6 =\cf7 \strokec7 "environment"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "hidden"\cf5 \strokec5  \cf4 \strokec4 onchange\cf6 \strokec6 =\cf7 \strokec7 "handleFileUpload(event)"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\
-\cb3                 \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "mt-6 p-4 bg-green-50 rounded border border-green-200 hidden"\cf5 \strokec5  \cf4 \strokec4 id\cf6 \strokec6 =\cf7 \strokec7 "latest-scan-box"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                     \cf6 \strokec6 <\cf2 \strokec2 p\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "text-sm text-green-700 font-semibold"\cf6 \strokec6 >\cf5 \strokec5 Tangkapan Terkini:\cf6 \strokec6 </\cf2 \strokec2 p\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                     \cf6 \strokec6 <\cf2 \strokec2 p\cf5 \strokec5  \cf4 \strokec4 id\cf6 \strokec6 =\cf7 \strokec7 "latest-scan-name"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "text-xl font-bold text-green-900"\cf6 \strokec6 >\cf5 \strokec5 -\cf6 \strokec6 </\cf2 \strokec2 p\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3             \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3         \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\
-\cb3         \cf8 \strokec8 <!-- TAB 2: SENARAI PELAJAR -->\cf5 \cb1 \strokec5 \
-\cb3         \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 id\cf6 \strokec6 =\cf7 \strokec7 "tab-senarai"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "tab-content hidden"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3             \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "bg-white p-6 rounded-lg shadow-md"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "flex justify-between items-center mb-6"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                     \cf6 \strokec6 <\cf2 \strokec2 h2\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "text-2xl font-bold"\cf6 \strokec6 >\cf5 \strokec5 Status Kehadiran\cf6 \strokec6 </\cf2 \strokec2 h2\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                     \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "space-x-2"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                         \cf6 \strokec6 <\cf2 \strokec2 span\cf5 \strokec5  \cf4 \strokec4 id\cf6 \strokec6 =\cf7 \strokec7 "hadir-count"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "px-3 py-1 bg-green-100 text-green-800 rounded-full font-bold"\cf6 \strokec6 >\cf5 \strokec5 Hadir: 0/40\cf6 \strokec6 </\cf2 \strokec2 span\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                         \cf6 \strokec6 <\cf2 \strokec2 button\cf5 \strokec5  \cf4 \strokec4 onclick\cf6 \strokec6 =\cf7 \strokec7 "resetKehadiran()"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 text-sm"\cf6 \strokec6 >\cf5 \strokec5 Reset\cf6 \strokec6 </\cf2 \strokec2 button\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                     \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cb1 \
-\cb3                 \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 id\cf6 \strokec6 =\cf7 \strokec7 "student-grid"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                     \cf8 \strokec8 <!-- Senarai pelajar akan dijana di sini melalui JS -->\cf5 \cb1 \strokec5 \
-\cb3                 \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3             \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3         \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\
-\cb3         \cf8 \strokec8 <!-- TAB 3: CETAK KAD QR -->\cf5 \cb1 \strokec5 \
-\cb3         \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 id\cf6 \strokec6 =\cf7 \strokec7 "tab-qr"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "tab-content hidden"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3             \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "bg-white p-6 rounded-lg shadow-md no-print mb-4"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cf6 \strokec6 <\cf2 \strokec2 h2\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "text-2xl font-bold mb-2"\cf6 \strokec6 >\cf5 \strokec5 Jana & Cetak Kad QR\cf6 \strokec6 </\cf2 \strokec2 h2\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cf6 \strokec6 <\cf2 \strokec2 p\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "text-gray-600 mb-4"\cf6 \strokec6 >\cf5 \strokec5 Cetak halaman ini dan potong mengikut petak. Setiap pelajar akan dapat satu kad unik. Nombor QR sengaja direka ringkas supaya mudah dikesan dari jauh.\cf6 \strokec6 </\cf2 \strokec2 p\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cf6 \strokec6 <\cf2 \strokec2 button\cf5 \strokec5  \cf4 \strokec4 onclick\cf6 \strokec6 =\cf7 \strokec7 "window.print()"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "px-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700 w-full md:w-auto"\cf6 \strokec6 >\cf5 \strokec5 \uc0\u55357 \u56744 \u65039  Cetak Kad Sekarang\cf6 \strokec6 </\cf2 \strokec2 button\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3             \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\
-\cb3             \cf8 \strokec8 <!-- Grid QR untuk paparan dan cetakan -->\cf5 \cb1 \strokec5 \
-\cb3             \cf6 \strokec6 <\cf2 \strokec2 div\cf5 \strokec5  \cf4 \strokec4 id\cf6 \strokec6 =\cf7 \strokec7 "qr-print-grid"\cf5 \strokec5  \cf4 \strokec4 class\cf6 \strokec6 =\cf7 \strokec7 "flex flex-wrap justify-center gap-4 qr-grid bg-white p-4 rounded"\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3                 \cf8 \strokec8 <!-- QR Codes akan dijana di sini melalui JS -->\cf5 \cb1 \strokec5 \
-\cb3             \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3         \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\
-\cb3     \cf6 \strokec6 </\cf2 \strokec2 div\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\
-\cb3     \cf6 \strokec6 <\cf2 \strokec2 script\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cb3         \cf8 \strokec8 // Data Pelajar (40 orang)\cf5 \cb1 \strokec5 \
-\cb3         \cf10 \strokec10 let\cf5 \strokec5  students \cf9 \strokec9 =\cf5 \strokec5  \cf9 \strokec9 [];\cf5 \cb1 \strokec5 \
-\cb3         \cf10 \strokec10 for\cf5 \strokec5  \cf9 \strokec9 (\cf10 \strokec10 let\cf5 \strokec5  i \cf9 \strokec9 =\cf5 \strokec5  \cf12 \strokec12 1\cf9 \strokec9 ;\cf5 \strokec5  i \cf9 \strokec9 <=\cf5 \strokec5  \cf12 \strokec12 40\cf9 \strokec9 ;\cf5 \strokec5  i\cf9 \strokec9 ++)\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3             \cf10 \strokec10 let\cf5 \strokec5  id \cf9 \strokec9 =\cf5 \strokec5  i \cf9 \strokec9 <\cf5 \strokec5  \cf12 \strokec12 10\cf5 \strokec5  \cf9 \strokec9 ?\cf5 \strokec5  \cf13 \strokec13 `S0\cf9 \strokec9 $\{\cf5 \strokec5 i\cf9 \strokec9 \}\cf13 \strokec13 `\cf5 \strokec5  \cf9 \strokec9 :\cf5 \strokec5  \cf13 \strokec13 `S\cf9 \strokec9 $\{\cf5 \strokec5 i\cf9 \strokec9 \}\cf13 \strokec13 `\cf9 \strokec9 ;\cf5 \strokec5  \cf8 \strokec8 // ID pendek: S01, S02... S40\cf5 \cb1 \strokec5 \
-\cb3             students\cf9 \strokec9 .\cf5 \strokec5 push\cf9 \strokec9 (\{\cf5 \cb1 \strokec5 \
-\cb3                 id\cf9 \strokec9 :\cf5 \strokec5  id\cf9 \strokec9 ,\cf5 \cb1 \strokec5 \
-\cb3                 no\cf9 \strokec9 :\cf5 \strokec5  i\cf9 \strokec9 ,\cf5 \cb1 \strokec5 \
-\cb3                 name\cf9 \strokec9 :\cf5 \strokec5  \cf13 \strokec13 `Pelajar \cf9 \strokec9 $\{\cf5 \strokec5 i\cf9 \strokec9 \}\cf13 \strokec13 `\cf9 \strokec9 ,\cf5 \cb1 \strokec5 \
-\cb3                 present\cf9 \strokec9 :\cf5 \strokec5  \cf10 \strokec10 false\cf5 \cb1 \strokec5 \
-\cb3             \cf9 \strokec9 \});\cf5 \cb1 \strokec5 \
-\cb3         \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\cb3         \cf8 \strokec8 // --- Fungsi Antaramuka (UI) ---\cf5 \cb1 \strokec5 \
-\cb3         \cf10 \strokec10 function\cf5 \strokec5  showTab\cf9 \strokec9 (\cf5 \strokec5 tabId\cf9 \strokec9 )\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3             document\cf9 \strokec9 .\cf5 \strokec5 querySelectorAll\cf9 \strokec9 (\cf13 \strokec13 '.tab-content'\cf9 \strokec9 ).\cf5 \strokec5 forEach\cf9 \strokec9 (\cf5 \strokec5 el \cf9 \strokec9 =>\cf5 \strokec5  el\cf9 \strokec9 .\cf5 \strokec5 classList\cf9 \strokec9 .\cf5 \strokec5 add\cf9 \strokec9 (\cf13 \strokec13 'hidden'\cf9 \strokec9 ));\cf5 \cb1 \strokec5 \
-\cb3             document\cf9 \strokec9 .\cf5 \strokec5 getElementById\cf9 \strokec9 (\cf5 \strokec5 tabId\cf9 \strokec9 ).\cf5 \strokec5 classList\cf9 \strokec9 .\cf5 \strokec5 remove\cf9 \strokec9 (\cf13 \strokec13 'hidden'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3             \cb1 \
-\cb3             \cf8 \strokec8 // Henti kamera automatik kalau tukar tab\cf5 \cb1 \strokec5 \
-\cb3             \cf10 \strokec10 if\cf9 \strokec9 (\cf5 \strokec5 tabId \cf9 \strokec9 !==\cf5 \strokec5  \cf13 \strokec13 'tab-kamera'\cf5 \strokec5  \cf9 \strokec9 &&\cf5 \strokec5  html5QrCode \cf9 \strokec9 &&\cf5 \strokec5  isScanning\cf9 \strokec9 )\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                 stopScanner\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cb3             \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\cb3         \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\cb3         \cf10 \strokec10 function\cf5 \strokec5  renderStudentList\cf9 \strokec9 ()\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3             \cf10 \strokec10 const\cf5 \strokec5  grid \cf9 \strokec9 =\cf5 \strokec5  document\cf9 \strokec9 .\cf5 \strokec5 getElementById\cf9 \strokec9 (\cf13 \strokec13 'student-grid'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3             grid\cf9 \strokec9 .\cf5 \strokec5 innerHTML \cf9 \strokec9 =\cf5 \strokec5  \cf13 \strokec13 ''\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3             \cf10 \strokec10 let\cf5 \strokec5  hadirCount \cf9 \strokec9 =\cf5 \strokec5  \cf12 \strokec12 0\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\
-\cb3             students\cf9 \strokec9 .\cf5 \strokec5 forEach\cf9 \strokec9 (\cf5 \strokec5 std \cf9 \strokec9 =>\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                 \cf10 \strokec10 if\cf5 \strokec5  \cf9 \strokec9 (\cf5 \strokec5 std\cf9 \strokec9 .\cf5 \strokec5 present\cf9 \strokec9 )\cf5 \strokec5  hadirCount\cf9 \strokec9 ++;\cf5 \cb1 \strokec5 \
-\cb3                 \cb1 \
-\cb3                 \cf10 \strokec10 const\cf5 \strokec5  card \cf9 \strokec9 =\cf5 \strokec5  document\cf9 \strokec9 .\cf5 \strokec5 createElement\cf9 \strokec9 (\cf13 \strokec13 'div'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                 card\cf9 \strokec9 .\cf5 \strokec5 className \cf9 \strokec9 =\cf5 \strokec5  \cf13 \strokec13 `p-3 rounded border text-center font-semibold transition-colors duration-300 \cf9 \strokec9 $\{\cf5 \strokec5 std\cf9 \strokec9 .\cf5 \strokec5 present \cf9 \strokec9 ?\cf5 \strokec5  \cf13 \strokec13 'bg-green-500 text-white border-green-600 shadow'\cf5 \strokec5  \cf9 \strokec9 :\cf5 \strokec5  \cf13 \strokec13 'bg-gray-50 text-gray-500 border-gray-200'\cf9 \strokec9 \}\cf13 \strokec13 `\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3                 card\cf9 \strokec9 .\cf5 \strokec5 innerHTML \cf9 \strokec9 =\cf5 \strokec5  \cf13 \strokec13 `\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf13 \cb3 \strokec13                     <div class="text-xs opacity-75">\cf9 \strokec9 $\{\cf5 \strokec5 std\cf9 \strokec9 .\cf5 \strokec5 id\cf9 \strokec9 \}\cf13 \strokec13 </div>\cf5 \cb1 \strokec5 \
-\cf13 \cb3 \strokec13                     <div>\cf9 \strokec9 $\{\cf5 \strokec5 std\cf9 \strokec9 .\cf5 \strokec5 name\cf9 \strokec9 \}\cf13 \strokec13 </div>\cf5 \cb1 \strokec5 \
-\cf13 \cb3 \strokec13                 `\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf5 \cb3                 grid\cf9 \strokec9 .\cf5 \strokec5 appendChild\cf9 \strokec9 (\cf5 \strokec5 card\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3             \cf9 \strokec9 \});\cf5 \cb1 \strokec5 \
-\
-\cb3             document\cf9 \strokec9 .\cf5 \strokec5 getElementById\cf9 \strokec9 (\cf13 \strokec13 'hadir-count'\cf9 \strokec9 ).\cf5 \strokec5 innerText \cf9 \strokec9 =\cf5 \strokec5  \cf13 \strokec13 `Hadir: \cf9 \strokec9 $\{\cf5 \strokec5 hadirCount\cf9 \strokec9 \}\cf13 \strokec13 /40`\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3         \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\cb3         \cf10 \strokec10 function\cf5 \strokec5  generateQRCodes\cf9 \strokec9 ()\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3             \cf10 \strokec10 const\cf5 \strokec5  grid \cf9 \strokec9 =\cf5 \strokec5  document\cf9 \strokec9 .\cf5 \strokec5 getElementById\cf9 \strokec9 (\cf13 \strokec13 'qr-print-grid'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3             grid\cf9 \strokec9 .\cf5 \strokec5 innerHTML \cf9 \strokec9 =\cf5 \strokec5  \cf13 \strokec13 ''\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\
-\cb3             students\cf9 \strokec9 .\cf5 \strokec5 forEach\cf9 \strokec9 (\cf5 \strokec5 std \cf9 \strokec9 =>\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                 \cf10 \strokec10 const\cf5 \strokec5  card \cf9 \strokec9 =\cf5 \strokec5  document\cf9 \strokec9 .\cf5 \strokec5 createElement\cf9 \strokec9 (\cf13 \strokec13 'div'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                 card\cf9 \strokec9 .\cf5 \strokec5 className \cf9 \strokec9 =\cf5 \strokec5  \cf13 \strokec13 'qr-card flex flex-col items-center justify-center'\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3                 \cb1 \
-\cb3                 \cf10 \strokec10 const\cf5 \strokec5  canvas \cf9 \strokec9 =\cf5 \strokec5  document\cf9 \strokec9 .\cf5 \strokec5 createElement\cf9 \strokec9 (\cf13 \strokec13 'canvas'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                 card\cf9 \strokec9 .\cf5 \strokec5 appendChild\cf9 \strokec9 (\cf5 \strokec5 canvas\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                 \cb1 \
-\cb3                 \cf10 \strokec10 const\cf5 \strokec5  label \cf9 \strokec9 =\cf5 \strokec5  document\cf9 \strokec9 .\cf5 \strokec5 createElement\cf9 \strokec9 (\cf13 \strokec13 'div'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                 label\cf9 \strokec9 .\cf5 \strokec5 className \cf9 \strokec9 =\cf5 \strokec5  \cf13 \strokec13 'mt-2 font-bold text-lg'\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3                 label\cf9 \strokec9 .\cf5 \strokec5 innerText \cf9 \strokec9 =\cf5 \strokec5  \cf13 \strokec13 `\cf9 \strokec9 $\{\cf5 \strokec5 std\cf9 \strokec9 .\cf5 \strokec5 id\cf9 \strokec9 \}\cf13 \strokec13  - \cf9 \strokec9 $\{\cf5 \strokec5 std\cf9 \strokec9 .\cf5 \strokec5 name\cf9 \strokec9 \}\cf13 \strokec13 `\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3                 card\cf9 \strokec9 .\cf5 \strokec5 appendChild\cf9 \strokec9 (\cf5 \strokec5 label\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\
-\cb3                 grid\cf9 \strokec9 .\cf5 \strokec5 appendChild\cf9 \strokec9 (\cf5 \strokec5 card\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\
-\cb3                 \cf8 \strokec8 // Jana QR menggunakan QRious\cf5 \cb1 \strokec5 \
-\cb3                 \cf10 \strokec10 new\cf5 \strokec5  \cf14 \strokec14 QRious\cf9 \strokec9 (\{\cf5 \cb1 \strokec5 \
-\cb3                     element\cf9 \strokec9 :\cf5 \strokec5  canvas\cf9 \strokec9 ,\cf5 \cb1 \strokec5 \
-\cb3                     value\cf9 \strokec9 :\cf5 \strokec5  std\cf9 \strokec9 .\cf5 \strokec5 id\cf9 \strokec9 ,\cf5 \strokec5  \cf8 \strokec8 // Data yang akan diimbas (contoh: "S01")\cf5 \cb1 \strokec5 \
-\cb3                     size\cf9 \strokec9 :\cf5 \strokec5  \cf12 \strokec12 200\cf9 \strokec9 ,\cf5 \cb1 \strokec5 \
-\cb3                     level\cf9 \strokec9 :\cf5 \strokec5  \cf13 \strokec13 'L'\cf5 \strokec5  \cf8 \strokec8 // Low error correction supaya corak kurang padat (mudah imbas dari jauh)\cf5 \cb1 \strokec5 \
-\cb3                 \cf9 \strokec9 \});\cf5 \cb1 \strokec5 \
-\cb3             \cf9 \strokec9 \});\cf5 \cb1 \strokec5 \
-\cb3         \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\cb3         \cf10 \strokec10 function\cf5 \strokec5  resetKehadiran\cf9 \strokec9 ()\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3             \cf10 \strokec10 if\cf9 \strokec9 (\cf5 \strokec5 confirm\cf9 \strokec9 (\cf13 \strokec13 "Adakah anda pasti mahu reset semua rekod kehadiran?"\cf9 \strokec9 ))\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                 students\cf9 \strokec9 .\cf5 \strokec5 forEach\cf9 \strokec9 (\cf5 \strokec5 std \cf9 \strokec9 =>\cf5 \strokec5  std\cf9 \strokec9 .\cf5 \strokec5 present \cf9 \strokec9 =\cf5 \strokec5  \cf10 \strokec10 false\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                 renderStudentList\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cb3                 document\cf9 \strokec9 .\cf5 \strokec5 getElementById\cf9 \strokec9 (\cf13 \strokec13 'latest-scan-box'\cf9 \strokec9 ).\cf5 \strokec5 classList\cf9 \strokec9 .\cf5 \strokec5 add\cf9 \strokec9 (\cf13 \strokec13 'hidden'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                 alert\cf9 \strokec9 (\cf13 \strokec13 "Kehadiran telah di-reset."\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3             \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\cb3         \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\cb3         \cf8 \strokec8 // --- Fungsi Scanner (Kamera) ---\cf5 \cb1 \strokec5 \
-\cb3         \cf10 \strokec10 let\cf5 \strokec5  html5QrCode\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3         \cf10 \strokec10 let\cf5 \strokec5  isScanning \cf9 \strokec9 =\cf5 \strokec5  \cf10 \strokec10 false\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3         \cb1 \
-\cb3         \cf8 \strokec8 // Bunyi 'Beep' bila berjaya imbas\cf5 \cb1 \strokec5 \
-\cb3         \cf10 \strokec10 function\cf5 \strokec5  playBeep\cf9 \strokec9 ()\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3             \cf10 \strokec10 try\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                 \cf10 \strokec10 const\cf5 \strokec5  ctx \cf9 \strokec9 =\cf5 \strokec5  \cf10 \strokec10 new\cf5 \strokec5  \cf9 \strokec9 (\cf5 \strokec5 window\cf9 \strokec9 .\cf14 \strokec14 AudioContext\cf5 \strokec5  \cf9 \strokec9 ||\cf5 \strokec5  window\cf9 \strokec9 .\cf5 \strokec5 webkitAudioContext\cf9 \strokec9 )();\cf5 \cb1 \strokec5 \
-\cb3                 \cf10 \strokec10 const\cf5 \strokec5  osc \cf9 \strokec9 =\cf5 \strokec5  ctx\cf9 \strokec9 .\cf5 \strokec5 createOscillator\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cb3                 osc\cf9 \strokec9 .\cf5 \strokec5 connect\cf9 \strokec9 (\cf5 \strokec5 ctx\cf9 \strokec9 .\cf5 \strokec5 destination\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                 osc\cf9 \strokec9 .\cf5 \strokec5 frequency\cf9 \strokec9 .\cf5 \strokec5 value \cf9 \strokec9 =\cf5 \strokec5  \cf12 \strokec12 1000\cf9 \strokec9 ;\cf5 \strokec5  \cf8 \strokec8 // Nada tinggi\cf5 \cb1 \strokec5 \
-\cb3                 osc\cf9 \strokec9 .\cf5 \strokec5 type \cf9 \strokec9 =\cf5 \strokec5  \cf13 \strokec13 "sine"\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3                 osc\cf9 \strokec9 .\cf5 \strokec5 start\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cb3                 osc\cf9 \strokec9 .\cf5 \strokec5 stop\cf9 \strokec9 (\cf5 \strokec5 ctx\cf9 \strokec9 .\cf5 \strokec5 currentTime \cf9 \strokec9 +\cf5 \strokec5  \cf12 \strokec12 0.1\cf9 \strokec9 );\cf5 \strokec5  \cf8 \strokec8 // Bunyi pendek 0.1 saat\cf5 \cb1 \strokec5 \
-\cb3             \cf9 \strokec9 \}\cf5 \strokec5  \cf10 \strokec10 catch\cf5 \strokec5  \cf9 \strokec9 (\cf5 \strokec5 e\cf9 \strokec9 )\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \strokec5  console\cf9 \strokec9 .\cf5 \strokec5 log\cf9 \strokec9 (\cf13 \strokec13 "Audio not supported"\cf9 \strokec9 );\cf5 \strokec5  \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\cb3         \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\cb3         \cf10 \strokec10 function\cf5 \strokec5  startScanner\cf9 \strokec9 ()\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3             \cf10 \strokec10 if\cf5 \strokec5  \cf9 \strokec9 (!\cf5 \strokec5 html5QrCode\cf9 \strokec9 )\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                 html5QrCode \cf9 \strokec9 =\cf5 \strokec5  \cf10 \strokec10 new\cf5 \strokec5  \cf14 \strokec14 Html5Qrcode\cf9 \strokec9 (\cf13 \strokec13 "reader"\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3             \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\cb3             \cb1 \
-\cb3             \cf10 \strokec10 const\cf5 \strokec5  config \cf9 \strokec9 =\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \strokec5  \cb1 \
-\cb3                 fps\cf9 \strokec9 :\cf5 \strokec5  \cf12 \strokec12 10\cf9 \strokec9 ,\cf5 \cb1 \strokec5 \
-\cb3             \cf9 \strokec9 \};\cf5 \cb1 \strokec5 \
-\
-\cb3             html5QrCode\cf9 \strokec9 .\cf5 \strokec5 start\cf9 \strokec9 (\{\cf5 \strokec5  facingMode\cf9 \strokec9 :\cf5 \strokec5  \cf13 \strokec13 "environment"\cf5 \strokec5  \cf9 \strokec9 \},\cf5 \strokec5  config\cf9 \strokec9 ,\cf5 \strokec5  onScanSuccess\cf9 \strokec9 )\cf5 \cb1 \strokec5 \
-\cb3                 \cf9 \strokec9 .\cf5 \strokec5 then\cf9 \strokec9 (()\cf5 \strokec5  \cf9 \strokec9 =>\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                     isScanning \cf9 \strokec9 =\cf5 \strokec5  \cf10 \strokec10 true\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3                     document\cf9 \strokec9 .\cf5 \strokec5 getElementById\cf9 \strokec9 (\cf13 \strokec13 'btn-start-scan'\cf9 \strokec9 ).\cf5 \strokec5 classList\cf9 \strokec9 .\cf5 \strokec5 add\cf9 \strokec9 (\cf13 \strokec13 'hidden'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                     document\cf9 \strokec9 .\cf5 \strokec5 getElementById\cf9 \strokec9 (\cf13 \strokec13 'btn-stop-scan'\cf9 \strokec9 ).\cf5 \strokec5 classList\cf9 \strokec9 .\cf5 \strokec5 remove\cf9 \strokec9 (\cf13 \strokec13 'hidden'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                     document\cf9 \strokec9 .\cf5 \strokec5 getElementById\cf9 \strokec9 (\cf13 \strokec13 'fallback-section'\cf9 \strokec9 ).\cf5 \strokec5 classList\cf9 \strokec9 .\cf5 \strokec5 add\cf9 \strokec9 (\cf13 \strokec13 'hidden'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                 \cf9 \strokec9 \})\cf5 \cb1 \strokec5 \
-\cb3                 \cf9 \strokec9 .\cf10 \strokec10 catch\cf9 \strokec9 (\cf5 \strokec5 err \cf9 \strokec9 =>\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                     \cf8 \strokec8 // Check kalau error disebabkan kebenaran (permission)\cf5 \cb1 \strokec5 \
-\cb3                     \cf10 \strokec10 if\cf5 \strokec5  \cf9 \strokec9 (\cf5 \strokec5 err\cf9 \strokec9 .\cf5 \strokec5 toString\cf9 \strokec9 ().\cf5 \strokec5 includes\cf9 \strokec9 (\cf13 \strokec13 "NotAllowedError"\cf9 \strokec9 )\cf5 \strokec5  \cf9 \strokec9 ||\cf5 \strokec5  err\cf9 \strokec9 .\cf5 \strokec5 toString\cf9 \strokec9 ().\cf5 \strokec5 includes\cf9 \strokec9 (\cf13 \strokec13 "Permission"\cf9 \strokec9 ))\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                         alert\cf9 \strokec9 (\cf13 \strokec13 "\uc0\u9888 \u65039  Akses Kamera Disekat!\\n\\nSila benarkan akses kamera untuk guna fungsi Live. Pergi ke Settings telefon > Safari/Chrome > Camera > Pilih 'Allow'.\\n\\nJika masih gagal, sila guna butang 'Ambil Gambar QR (Manual)'."\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                     \cf9 \strokec9 \}\cf5 \strokec5  \cf10 \strokec10 else\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                         alert\cf9 \strokec9 (\cf13 \strokec13 "Ralat kamera: "\cf5 \strokec5  \cf9 \strokec9 +\cf5 \strokec5  err\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                     \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\cb3                     \cb1 \
-\cb3                     \cf8 \strokec8 // Tunjuk butang amik gambar manual kalau live kamera sangkut\cf5 \cb1 \strokec5 \
-\cb3                     document\cf9 \strokec9 .\cf5 \strokec5 getElementById\cf9 \strokec9 (\cf13 \strokec13 'fallback-section'\cf9 \strokec9 ).\cf5 \strokec5 classList\cf9 \strokec9 .\cf5 \strokec5 remove\cf9 \strokec9 (\cf13 \strokec13 'hidden'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                 \cf9 \strokec9 \});\cf5 \cb1 \strokec5 \
-\cb3         \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\cb3         \cf10 \strokec10 function\cf5 \strokec5  stopScanner\cf9 \strokec9 ()\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3             \cf10 \strokec10 if\cf5 \strokec5  \cf9 \strokec9 (\cf5 \strokec5 html5QrCode \cf9 \strokec9 &&\cf5 \strokec5  isScanning\cf9 \strokec9 )\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                 html5QrCode\cf9 \strokec9 .\cf5 \strokec5 stop\cf9 \strokec9 ().\cf5 \strokec5 then\cf9 \strokec9 (()\cf5 \strokec5  \cf9 \strokec9 =>\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                     isScanning \cf9 \strokec9 =\cf5 \strokec5  \cf10 \strokec10 false\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3                     document\cf9 \strokec9 .\cf5 \strokec5 getElementById\cf9 \strokec9 (\cf13 \strokec13 'btn-start-scan'\cf9 \strokec9 ).\cf5 \strokec5 classList\cf9 \strokec9 .\cf5 \strokec5 remove\cf9 \strokec9 (\cf13 \strokec13 'hidden'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                     document\cf9 \strokec9 .\cf5 \strokec5 getElementById\cf9 \strokec9 (\cf13 \strokec13 'btn-stop-scan'\cf9 \strokec9 ).\cf5 \strokec5 classList\cf9 \strokec9 .\cf5 \strokec5 add\cf9 \strokec9 (\cf13 \strokec13 'hidden'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                 \cf9 \strokec9 \}).\cf10 \strokec10 catch\cf9 \strokec9 (\cf5 \strokec5 err \cf9 \strokec9 =>\cf5 \strokec5  console\cf9 \strokec9 .\cf5 \strokec5 log\cf9 \strokec9 (\cf5 \strokec5 err\cf9 \strokec9 ));\cf5 \cb1 \strokec5 \
-\cb3             \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\cb3         \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\cb3         \cf8 \strokec8 // Fungsi alternatif: Imbas dari gambar yang di-upload/ditangkap\cf5 \cb1 \strokec5 \
-\cb3         \cf10 \strokec10 function\cf5 \strokec5  handleFileUpload\cf9 \strokec9 (\cf5 \strokec5 event\cf9 \strokec9 )\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3             \cf10 \strokec10 if\cf5 \strokec5  \cf9 \strokec9 (\cf5 \strokec5 event\cf9 \strokec9 .\cf5 \strokec5 target\cf9 \strokec9 .\cf5 \strokec5 files\cf9 \strokec9 .\cf5 \strokec5 length \cf9 \strokec9 ==\cf5 \strokec5  \cf12 \strokec12 0\cf9 \strokec9 )\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                 \cf10 \strokec10 return\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3             \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\cb3             \cf10 \strokec10 const\cf5 \strokec5  imageFile \cf9 \strokec9 =\cf5 \strokec5  event\cf9 \strokec9 .\cf5 \strokec5 target\cf9 \strokec9 .\cf5 \strokec5 files\cf9 \strokec9 [\cf12 \strokec12 0\cf9 \strokec9 ];\cf5 \cb1 \strokec5 \
-\cb3             \cb1 \
-\cb3             \cf10 \strokec10 if\cf5 \strokec5  \cf9 \strokec9 (!\cf5 \strokec5 html5QrCode\cf9 \strokec9 )\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                 html5QrCode \cf9 \strokec9 =\cf5 \strokec5  \cf10 \strokec10 new\cf5 \strokec5  \cf14 \strokec14 Html5Qrcode\cf9 \strokec9 (\cf13 \strokec13 "reader"\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3             \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\cb3             \cf8 \strokec8 // Baca QR dari fail gambar tersebut\cf5 \cb1 \strokec5 \
-\cb3             html5QrCode\cf9 \strokec9 .\cf5 \strokec5 scanFile\cf9 \strokec9 (\cf5 \strokec5 imageFile\cf9 \strokec9 ,\cf5 \strokec5  \cf10 \strokec10 true\cf9 \strokec9 )\cf5 \cb1 \strokec5 \
-\cb3                 \cf9 \strokec9 .\cf5 \strokec5 then\cf9 \strokec9 (\cf5 \strokec5 decodedText \cf9 \strokec9 =>\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                     onScanSuccess\cf9 \strokec9 (\cf5 \strokec5 decodedText\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                     alert\cf9 \strokec9 (\cf13 \strokec13 "Berjaya kesan: "\cf5 \strokec5  \cf9 \strokec9 +\cf5 \strokec5  decodedText\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                 \cf9 \strokec9 \})\cf5 \cb1 \strokec5 \
-\cb3                 \cf9 \strokec9 .\cf10 \strokec10 catch\cf9 \strokec9 (\cf5 \strokec5 err \cf9 \strokec9 =>\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                     alert\cf9 \strokec9 (\cf13 \strokec13 "Gagal mengesan QR dari gambar. Cuba pastikan kod QR nampak jelas atau ambil gambar sekali lagi."\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                 \cf9 \strokec9 \});\cf5 \cb1 \strokec5 \
-\cb3                 \cb1 \
-\cb3             \cf8 \strokec8 // Reset input supaya boleh tangkap gambar seterusnya\cf5 \cb1 \strokec5 \
-\cb3             event\cf9 \strokec9 .\cf5 \strokec5 target\cf9 \strokec9 .\cf5 \strokec5 value \cf9 \strokec9 =\cf5 \strokec5  \cf13 \strokec13 ""\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3         \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\cb3         \cf8 \strokec8 // Apa terjadi bila kamera/gambar jumpa QR\cf5 \cb1 \strokec5 \
-\cb3         \cf10 \strokec10 function\cf5 \strokec5  onScanSuccess\cf9 \strokec9 (\cf5 \strokec5 decodedText\cf9 \strokec9 ,\cf5 \strokec5  decodedResult\cf9 \strokec9 )\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3             \cf8 \strokec8 // Cari pelajar berdasarkan kod yang diimbas (contoh: "S01")\cf5 \cb1 \strokec5 \
-\cb3             \cf10 \strokec10 const\cf5 \strokec5  studentIndex \cf9 \strokec9 =\cf5 \strokec5  students\cf9 \strokec9 .\cf5 \strokec5 findIndex\cf9 \strokec9 (\cf5 \strokec5 s \cf9 \strokec9 =>\cf5 \strokec5  s\cf9 \strokec9 .\cf5 \strokec5 id \cf9 \strokec9 ===\cf5 \strokec5  decodedText\cf9 \strokec9 .\cf5 \strokec5 trim\cf9 \strokec9 ());\cf5 \cb1 \strokec5 \
-\cb3             \cb1 \
-\cb3             \cf10 \strokec10 if\cf5 \strokec5  \cf9 \strokec9 (\cf5 \strokec5 studentIndex \cf9 \strokec9 !==\cf5 \strokec5  \cf9 \strokec9 -\cf12 \strokec12 1\cf9 \strokec9 )\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                 \cf10 \strokec10 if\cf5 \strokec5  \cf9 \strokec9 (!\cf5 \strokec5 students\cf9 \strokec9 [\cf5 \strokec5 studentIndex\cf9 \strokec9 ].\cf5 \strokec5 present\cf9 \strokec9 )\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3                     \cf8 \strokec8 // Kalau belum hadir, tandakan hadir\cf5 \cb1 \strokec5 \
-\cb3                     students\cf9 \strokec9 [\cf5 \strokec5 studentIndex\cf9 \strokec9 ].\cf5 \strokec5 present \cf9 \strokec9 =\cf5 \strokec5  \cf10 \strokec10 true\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3                     playBeep\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cb3                     \cb1 \
-\cb3                     \cf8 \strokec8 // Kemaskini paparan makluman imbasan terkini\cf5 \cb1 \strokec5 \
-\cb3                     \cf10 \strokec10 const\cf5 \strokec5  box \cf9 \strokec9 =\cf5 \strokec5  document\cf9 \strokec9 .\cf5 \strokec5 getElementById\cf9 \strokec9 (\cf13 \strokec13 'latest-scan-box'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                     \cf10 \strokec10 const\cf5 \strokec5  nameLabel \cf9 \strokec9 =\cf5 \strokec5  document\cf9 \strokec9 .\cf5 \strokec5 getElementById\cf9 \strokec9 (\cf13 \strokec13 'latest-scan-name'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                     box\cf9 \strokec9 .\cf5 \strokec5 classList\cf9 \strokec9 .\cf5 \strokec5 remove\cf9 \strokec9 (\cf13 \strokec13 'hidden'\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cb3                     nameLabel\cf9 \strokec9 .\cf5 \strokec5 innerText \cf9 \strokec9 =\cf5 \strokec5  \cf13 \strokec13 `\uc0\u9989  \cf9 \strokec9 $\{\cf5 \strokec5 students\cf9 \strokec9 [\cf5 \strokec5 studentIndex\cf9 \strokec9 ].\cf5 \strokec5 name\cf9 \strokec9 \}\cf13 \strokec13  (\cf9 \strokec9 $\{\cf5 \strokec5 students\cf9 \strokec9 [\cf5 \strokec5 studentIndex\cf9 \strokec9 ].\cf5 \strokec5 id\cf9 \strokec9 \}\cf13 \strokec13 )`\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cb3                     \cb1 \
-\cb3                     \cf8 \strokec8 // Kemaskini data senarai di background\cf5 \cb1 \strokec5 \
-\cb3                     renderStudentList\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cb3                 \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\cb3             \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\cb3         \cf9 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\cb3         \cf8 \strokec8 // Inisialisasi awal\cf5 \cb1 \strokec5 \
-\cb3         window\cf9 \strokec9 .\cf5 \strokec5 onload \cf9 \strokec9 =\cf5 \strokec5  \cf9 \strokec9 ()\cf5 \strokec5  \cf9 \strokec9 =>\cf5 \strokec5  \cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cb3             renderStudentList\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cb3             generateQRCodes\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cb3         \cf9 \strokec9 \};\cf5 \cb1 \strokec5 \
-\
-\cb3     \cf6 \strokec6 </\cf2 \strokec2 script\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf6 \cb3 \strokec6 </\cf2 \strokec2 body\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-\cf6 \cb3 \strokec6 </\cf2 \strokec2 html\cf6 \strokec6 >\cf5 \cb1 \strokec5 \
-}
+    <!-- Navigasi -->
+    <nav class="bg-blue-600 text-white shadow-md p-4 no-print fixed top-0 w-full z-10">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Kehadiran Kelas</h1>
+            <div class="space-x-2">
+                <button onclick="showTab('tab-kamera')" class="px-3 py-2 bg-blue-700 hover:bg-blue-800 rounded">📷 Imbas</button>
+                <button onclick="showTab('tab-senarai')" class="px-3 py-2 bg-blue-700 hover:bg-blue-800 rounded">📋 Senarai</button>
+                <button onclick="showTab('tab-qr')" class="px-3 py-2 bg-blue-700 hover:bg-blue-800 rounded">🖨️ Kad QR</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto pt-20 p-4">
+
+        <!-- TAB 1: KAMERA (Imbas QR) -->
+        <div id="tab-kamera" class="tab-content">
+            <div class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold mb-4 text-center">Imbas QR Pelajar</h2>
+                <p class="text-gray-500 text-center mb-4 text-sm">Hala kamera ke arah kad QR pelajar. Sistem akan kesan secara automatik.</p>
+                
+                <div id="reader" class="w-full bg-black rounded overflow-hidden"></div>
+                
+                <div class="mt-6 text-center">
+                    <button id="btn-start-scan" onclick="startScanner()" class="px-6 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-600">Mula Imbas Live</button>
+                    <button id="btn-stop-scan" onclick="stopScanner()" class="px-6 py-2 bg-red-500 text-white font-bold rounded hover:bg-red-600 hidden">Berhenti Imbas</button>
+                </div>
+
+                <!-- Fallback Seksyen (Jika Live Kamera Disekat) -->
+                <div id="fallback-section" class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded hidden text-center">
+                    <p class="text-sm text-yellow-800 mb-3 font-semibold">Live kamera disekat oleh sistem (biasa berlaku di iOS/Apps Script). Guna mod alternatif di bawah:</p>
+                    <label for="qr-input-file" class="cursor-pointer px-6 py-3 bg-blue-500 text-white font-bold rounded hover:bg-blue-600 inline-block shadow">
+                        📸 Ambil Gambar QR (Manual)
+                    </label>
+                    <input type="file" id="qr-input-file" accept="image/*" capture="environment" class="hidden" onchange="handleFileUpload(event)">
+                </div>
+
+                <div class="mt-6 p-4 bg-green-50 rounded border border-green-200 hidden" id="latest-scan-box">
+                    <p class="text-sm text-green-700 font-semibold">Tangkapan Terkini:</p>
+                    <p id="latest-scan-name" class="text-xl font-bold text-green-900">-</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: SENARAI PELAJAR -->
+        <div id="tab-senarai" class="tab-content hidden">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Status Kehadiran</h2>
+                    <div class="space-x-2">
+                        <span id="hadir-count" class="px-3 py-1 bg-green-100 text-green-800 rounded-full font-bold">Hadir: 0/40</span>
+                        <button onclick="resetKehadiran()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 text-sm">Reset</button>
+                    </div>
+                </div>
+                
+                <div id="student-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                    <!-- Senarai pelajar akan dijana di sini melalui JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: CETAK KAD QR -->
+        <div id="tab-qr" class="tab-content hidden">
+            <div class="bg-white p-6 rounded-lg shadow-md no-print mb-4">
+                <h2 class="text-2xl font-bold mb-2">Jana & Cetak Kad QR</h2>
+                <p class="text-gray-600 mb-4">Cetak halaman ini dan potong mengikut petak. Setiap pelajar akan dapat satu kad unik. Nombor QR sengaja direka ringkas supaya mudah dikesan dari jauh.</p>
+                <button onclick="window.print()" class="px-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700 w-full md:w-auto">🖨️ Cetak Kad Sekarang</button>
+            </div>
+
+            <!-- Grid QR untuk paparan dan cetakan -->
+            <div id="qr-print-grid" class="flex flex-wrap justify-center gap-4 qr-grid bg-white p-4 rounded">
+                <!-- QR Codes akan dijana di sini melalui JS -->
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Data Pelajar (40 orang)
+        let students = [];
+        for (let i = 1; i <= 40; i++) {
+            let id = i < 10 ? `S0${i}` : `S${i}`; // ID pendek: S01, S02... S40
+            students.push({
+                id: id,
+                no: i,
+                name: `Pelajar ${i}`,
+                present: false
+            });
+        }
+
+        // --- Fungsi Antaramuka (UI) ---
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            // Henti kamera automatik kalau tukar tab
+            if(tabId !== 'tab-kamera' && html5QrCode && isScanning) {
+                stopScanner();
+            }
+        }
+
+        function renderStudentList() {
+            const grid = document.getElementById('student-grid');
+            grid.innerHTML = '';
+            let hadirCount = 0;
+
+            students.forEach(std => {
+                if (std.present) hadirCount++;
+                
+                const card = document.createElement('div');
+                card.className = `p-3 rounded border text-center font-semibold transition-colors duration-300 ${std.present ? 'bg-green-500 text-white border-green-600 shadow' : 'bg-gray-50 text-gray-500 border-gray-200'}`;
+                card.innerHTML = `
+                    <div class="text-xs opacity-75">${std.id}</div>
+                    <div>${std.name}</div>
+                `;
+                grid.appendChild(card);
+            });
+
+            document.getElementById('hadir-count').innerText = `Hadir: ${hadirCount}/40`;
+        }
+
+        function generateQRCodes() {
+            const grid = document.getElementById('qr-print-grid');
+            grid.innerHTML = '';
+
+            students.forEach(std => {
+                const card = document.createElement('div');
+                card.className = 'qr-card flex flex-col items-center justify-center';
+                
+                const canvas = document.createElement('canvas');
+                card.appendChild(canvas);
+                
+                const label = document.createElement('div');
+                label.className = 'mt-2 font-bold text-lg';
+                label.innerText = `${std.id} - ${std.name}`;
+                card.appendChild(label);
+
+                grid.appendChild(card);
+
+                // Jana QR menggunakan QRious
+                new QRious({
+                    element: canvas,
+                    value: std.id, // Data yang akan diimbas (contoh: "S01")
+                    size: 200,
+                    level: 'L' // Low error correction supaya corak kurang padat (mudah imbas dari jauh)
+                });
+            });
+        }
+
+        function resetKehadiran() {
+            if(confirm("Adakah anda pasti mahu reset semua rekod kehadiran?")) {
+                students.forEach(std => std.present = false);
+                renderStudentList();
+                document.getElementById('latest-scan-box').classList.add('hidden');
+                alert("Kehadiran telah di-reset.");
+            }
+        }
+
+        // --- Fungsi Scanner (Kamera) ---
+        let html5QrCode;
+        let isScanning = false;
+        
+        // Bunyi 'Beep' bila berjaya imbas
+        function playBeep() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                osc.connect(ctx.destination);
+                osc.frequency.value = 1000; // Nada tinggi
+                osc.type = "sine";
+                osc.start();
+                osc.stop(ctx.currentTime + 0.1); // Bunyi pendek 0.1 saat
+            } catch (e) { console.log("Audio not supported"); }
+        }
+
+        function startScanner() {
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("reader");
+            }
+            
+            const config = { 
+                fps: 10,
+            };
+
+            html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
+                .then(() => {
+                    isScanning = true;
+                    document.getElementById('btn-start-scan').classList.add('hidden');
+                    document.getElementById('btn-stop-scan').classList.remove('hidden');
+                    document.getElementById('fallback-section').classList.add('hidden');
+                })
+                .catch(err => {
+                    // Check kalau error disebabkan kebenaran (permission)
+                    if (err.toString().includes("NotAllowedError") || err.toString().includes("Permission")) {
+                        alert("⚠️ Akses Kamera Disekat!\n\nSila benarkan akses kamera untuk guna fungsi Live. Pergi ke Settings telefon > Safari/Chrome > Camera > Pilih 'Allow'.\n\nJika masih gagal, sila guna butang 'Ambil Gambar QR (Manual)'.");
+                    } else {
+                        alert("Ralat kamera: " + err);
+                    }
+                    
+                    // Tunjuk butang amik gambar manual kalau live kamera sangkut
+                    document.getElementById('fallback-section').classList.remove('hidden');
+                });
+        }
+
+        function stopScanner() {
+            if (html5QrCode && isScanning) {
+                html5QrCode.stop().then(() => {
+                    isScanning = false;
+                    document.getElementById('btn-start-scan').classList.remove('hidden');
+                    document.getElementById('btn-stop-scan').classList.add('hidden');
+                }).catch(err => console.log(err));
+            }
+        }
+
+        // Fungsi alternatif: Imbas dari gambar yang di-upload/ditangkap
+        function handleFileUpload(event) {
+            if (event.target.files.length == 0) {
+                return;
+            }
+            const imageFile = event.target.files[0];
+            
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("reader");
+            }
+
+            // Baca QR dari fail gambar tersebut
+            html5QrCode.scanFile(imageFile, true)
+                .then(decodedText => {
+                    onScanSuccess(decodedText);
+                    alert("Berjaya kesan: " + decodedText);
+                })
+                .catch(err => {
+                    alert("Gagal mengesan QR dari gambar. Cuba pastikan kod QR nampak jelas atau ambil gambar sekali lagi.");
+                });
+                
+            // Reset input supaya boleh tangkap gambar seterusnya
+            event.target.value = "";
+        }
+
+        // Apa terjadi bila kamera/gambar jumpa QR
+        function onScanSuccess(decodedText, decodedResult) {
+            // Cari pelajar berdasarkan kod yang diimbas (contoh: "S01")
+            const studentIndex = students.findIndex(s => s.id === decodedText.trim());
+            
+            if (studentIndex !== -1) {
+                if (!students[studentIndex].present) {
+                    // Kalau belum hadir, tandakan hadir
+                    students[studentIndex].present = true;
+                    playBeep();
+                    
+                    // Kemaskini paparan makluman imbasan terkini
+                    const box = document.getElementById('latest-scan-box');
+                    const nameLabel = document.getElementById('latest-scan-name');
+                    box.classList.remove('hidden');
+                    nameLabel.innerText = `✅ ${students[studentIndex].name} (${students[studentIndex].id})`;
+                    
+                    // Kemaskini data senarai di background
+                    renderStudentList();
+                }
+            }
+        }
+
+        // Inisialisasi awal
+        window.onload = () => {
+            renderStudentList();
+            generateQRCodes();
+        };
+
+    </script>
+</body>
+</html>
