@@ -97,7 +97,7 @@
         <div id="tab-kamera" class="tab-content">
             <div class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
                 <h2 class="text-2xl font-bold mb-4 text-center">Imbas Kad Pelajar</h2>
-                <p class="text-gray-500 text-center mb-4 text-sm">Hala kamera ke arah kad pelajar. Sistem akan kesan secara automatik.</p>
+                <p class="text-gray-500 text-center mb-4 text-sm">Hala kamera ke arah kelas. Sistem boleh menangkap berbilang kad serentak di dalam skrin.</p>
                 
                 <div id="reader" class="w-full bg-black rounded overflow-hidden shadow-inner"></div>
                 
@@ -167,8 +167,6 @@
         // Data Pelajar (40 orang)
         let students = [];
         for (let i = 1; i <= 40; i++) {
-            // Kita tambah "P" pada id tersembunyi (cth: P1) supaya scanner tak abaikan data terlalu pendek.
-            // Tapi untuk paparan pada kad, kita guna nombor biasa (1, 2, 3...)
             let displayNombor = i.toString(); 
             let scanId = "P" + displayNombor;
             students.push({ id: scanId, display: displayNombor, name: `Pelajar ${i}`, present: false });
@@ -199,24 +197,20 @@
             const grid = document.getElementById('qr-print-grid');
             grid.innerHTML = '';
             students.forEach(std => {
-                // Wrapper utama kad (Bingkai luar ala Plickers)
                 const cardWrapper = document.createElement('div');
                 cardWrapper.className = 'qr-card-wrapper';
 
-                // Tambah 4 nombor di penjuru kad
                 const corners = ['cn-tl', 'cn-tr', 'cn-bl', 'cn-br'];
                 corners.forEach(pos => {
                     const span = document.createElement('span');
                     span.className = `corner-number ${pos}`;
-                    span.innerText = std.display; // Tunjuk nombor biasa
+                    span.innerText = std.display;
                     cardWrapper.appendChild(span);
                 });
 
-                // Ruang lukisan QR
                 const canvas = document.createElement('canvas');
                 cardWrapper.appendChild(canvas);
                 
-                // Nama kecil di bawah QR
                 const label = document.createElement('div');
                 label.className = 'mt-3 font-bold text-lg text-black text-center';
                 label.innerText = std.name;
@@ -224,7 +218,6 @@
 
                 grid.appendChild(cardWrapper);
                 
-                // Jana QR (menggunakan scanId seperti "P1")
                 new QRious({ 
                     element: canvas, 
                     value: std.id, 
@@ -245,34 +238,66 @@
 
         let html5QrCode;
         let isScanning = false;
+        let multiScanInterval;
         
+        // Pengurusan Audio yang dioptimasi untuk imbasan serentak yang banyak (Multi-scan)
+        let audioCtx = null;
         function playBeep() {
             try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                osc.connect(ctx.destination);
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                gainNode.gain.value = 0.5; // Rendahkan sedikit kekuatan bunyi
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
                 osc.frequency.value = 800;
                 osc.start();
-                osc.stop(ctx.currentTime + 0.1);
+                osc.stop(audioCtx.currentTime + 0.1);
             } catch (e) {}
         }
 
         function startScanner() {
             if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
             
-            // Konfigurasi stabil. Dibuang experimental feature yang bug pada iOS
             const config = { 
-                fps: 15, // Kelajuan stabil dan selamat
+                fps: 30, // Dipaksa maksimum laju
+                disableFlip: true, // Tidak baca secara terbalik, menjimatkan memori & lebih pantas
                 formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ]
             };
             
-            // Guna tetapan kamera environment asas supaya serasi dengan semua peranti (tak kena block)
             html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
                 .then(() => {
                     isScanning = true;
                     document.getElementById('btn-start-scan').classList.add('hidden');
                     document.getElementById('btn-stop-scan').classList.remove('hidden');
                     document.getElementById('fallback-section').classList.add('hidden');
+
+                    // ==========================================
+                    // MULTI-SCAN HACK (Tangkap Semua Dalam Skrin)
+                    // ==========================================
+                    if ('BarcodeDetector' in window) {
+                        const detector = new BarcodeDetector({ formats: ['qr_code'] });
+                        multiScanInterval = setInterval(async () => {
+                            const videoEl = document.querySelector('#reader video');
+                            // Pastikan video sedia ada
+                            if (videoEl && videoEl.readyState === 4) { 
+                                try {
+                                    // Cari SEMUA barcode yang wujud dalam satu frame video serentak
+                                    const barcodes = await detector.detect(videoEl);
+                                    barcodes.forEach(barcode => {
+                                        onScanSuccess(barcode.rawValue);
+                                    });
+                                } catch (err) {
+                                    // Abaikan secara senyap jika ada ralat frame
+                                }
+                            }
+                        }, 300); // Tembak scan serentak 3 kali setiap saat
+                    }
                 })
                 .catch(err => {
                     console.error("Ralat Kamera:", err);
@@ -282,6 +307,10 @@
 
         function stopScanner() {
             if (html5QrCode && isScanning) {
+                if (multiScanInterval) {
+                    clearInterval(multiScanInterval);
+                    multiScanInterval = null;
+                }
                 html5QrCode.stop().then(() => {
                     isScanning = false;
                     document.getElementById('btn-start-scan').classList.remove('hidden');
@@ -290,19 +319,46 @@
             }
         }
 
+        // =======================================================
+        // FAIL UPLOAD: Sekarang menyokong tangkapan pukal (Ramai)
+        // =======================================================
         function handleFileUpload(event) {
             if (event.target.files.length == 0) return;
+            const file = event.target.files[0];
+            
+            if ('BarcodeDetector' in window) {
+                const img = new Image();
+                img.onload = async () => {
+                    try {
+                        const detector = new BarcodeDetector({ formats: ['qr_code'] });
+                        const barcodes = await detector.detect(img);
+                        if (barcodes.length > 0) {
+                            barcodes.forEach(b => onScanSuccess(b.rawValue));
+                            alert(`Berjaya membaca ${barcodes.length} pelajar daripada gambar ini!`);
+                        } else {
+                            fallbackFileScan(file);
+                        }
+                    } catch (e) {
+                        fallbackFileScan(file);
+                    }
+                };
+                img.src = URL.createObjectURL(file);
+            } else {
+                fallbackFileScan(file);
+            }
+            event.target.value = "";
+        }
+
+        function fallbackFileScan(file) {
             if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-            html5QrCode.scanFile(event.target.files[0], true)
+            html5QrCode.scanFile(file, true)
                 .then(decodedText => onScanSuccess(decodedText))
                 .catch(err => alert("Gagal mengesan kad. Cuba pastikan gambar lebih jelas dan kotak hitam tidak terlindung."));
-            event.target.value = "";
         }
 
         function updateRecentLogs(student) {
             const logContainer = document.getElementById('recent-logs');
             
-            // Buang mesej "Belum ada imbasan" jika ini imbasan pertama
             if (logContainer.querySelector('p.italic')) {
                 logContainer.innerHTML = '';
             }
@@ -320,7 +376,6 @@
                 <span class="text-xs text-gray-400 font-mono bg-white px-2 py-1 rounded border">${timeStr}</span>
             `;
 
-            // Masukkan di bahagian paling atas senarai
             logContainer.prepend(logEntry);
         }
 
@@ -332,16 +387,12 @@
                     students[studentIndex].present = true;
                     playBeep();
                     
-                    // Kemaskini Kotak Paparan Utama
                     const box = document.getElementById('latest-scan-box');
                     const nameLabel = document.getElementById('latest-scan-name');
                     box.classList.remove('hidden');
                     nameLabel.innerText = `${students[studentIndex].display} - ${students[studentIndex].name}`;
                     
-                    // Tambah ke senarai log terkini (Live Feed)
                     updateRecentLogs(students[studentIndex]);
-                    
-                    // Kemaskini senarai keseluruhan
                     renderStudentList();
                 }
             }
